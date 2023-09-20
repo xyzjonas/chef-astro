@@ -1,0 +1,100 @@
+---
+
+import type { Recipe } from '../types';
+import { smallImage } from '../utils/links';
+
+interface Props { recipe: Recipe; }
+
+const { recipe } = Astro.props;
+
+const thumbUrl = `url(${smallImage(recipe.id)})`
+
+---
+
+<li class="link-card" data-visible="true" data-recipe-id={recipe.id} data-recipe-title={recipe.title} data-recipe-subtitle={recipe.subtitle}>
+    <a href={`/recipes/${recipe.id}`}>
+        <header>
+            {recipe.tags.map(t => (
+                <p class="pin">{t.name}</p>
+            ))}
+        </header>
+        <footer>
+        <h2>{recipe.title}</h2>
+        <p>{recipe.subtitle}</p>
+        </footer>
+    </a>
+</li>
+<style define:vars={{ thumbUrl }} lang="scss">
+@use '../styles/colors' ;
+.link-card {
+    list-style: none;
+    display: flex;
+    background-image: var(--thumbUrl);
+    border-radius: 5px;
+    background-position: center;
+    background-size: cover;
+    transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    aspect-ratio: 0.7;
+
+    overflow: hidden;
+
+    text-shadow: #101113 3px -1px 10px, #101113 -3px 1px 10px;
+    a {
+
+        width: 100%;
+        text-decoration: none;
+        line-height: 1.4;
+        padding: calc(1.5rem - 1px);
+        border-radius: 3px;
+        color: white;
+        background-color: #23262d99;
+        // opacity: 0.8;
+        display: flex;
+        flex-direction: column;
+        header {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+        }
+        footer {
+            margin-top: auto;
+        }
+    }
+}
+
+h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+p {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+.link-card:is(:hover, :focus-within) {
+    background-position: 0;
+    /* background-image: var(--accent-gradient); */
+    a {
+        background-color: #23262d55;
+    }
+}
+.link-card:is(:hover, :focus-within) h2 {
+    color: rgb(var(--accent));
+}
+
+.pin {
+    font-size: 0.8em;
+    background-color: colors.$accent;
+    opacity: 1;
+    padding: 0.1em 0.5em;
+    width: fit-content;
+    border-radius: 0.4em;
+    text-shadow: none;
+}
+.link-card[data-visible="true"] {
+    display: flex;
+}
+.link-card[data-visible="false"] {
+    display: none;
+}
+</style>

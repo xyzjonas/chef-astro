@@ -1,0 +1,149 @@
+---
+import Pin from '../../components/Pin.astro';
+import IngredientItem from '../../components/IngredientItem.astro'
+import Layout from '../../layouts/Layout.astro';
+import RecipeLayout from '../../layouts/RecipeLayout.astro';
+import { getRecipes, getRecipe } from '../../singleton';
+import type { Recipe } from '../../types';
+import { mediumImage } from '../../utils/links';
+
+export async function getStaticPaths() {
+
+    const recipes = await getRecipes();
+
+    return recipes.map((r: Recipe) => {
+        return { params: { id: r.id } }
+    })
+};
+
+const { id } = Astro.params;
+const recipe: Recipe = await getRecipe(parseInt(`${id}`))
+
+// return Astro.redirect('/404');
+
+const thumbUrl = mediumImage(recipe.id)
+
+---
+<RecipeLayout title={recipe.title}>
+
+<section class="summary">
+    <h1>{recipe.title}</h1>
+    <h2>{recipe.subtitle}</h2>
+    <div class="summary-items">
+        <p>X</p>
+        <p>Y</p>
+        <p>Z</p>
+    </div>
+</section>
+
+<div><i class="gg-push-left"></i></div>
+<a href="/">↵ back</a>
+
+<section class="ingredients">
+    <div class="content">
+        <h4 style="margin-bottom: 0;">INGREDIENTS</h4>
+        <ul class="ingredients-list">
+            {recipe.ingredients.map(ing => (
+                <IngredientItem ingredientItem={ing} />
+            ))}
+        </ul>
+    </div>
+    <div class="image">
+        <img src={thumbUrl}/>
+    </div>
+</section>
+
+<section class="content">
+    {recipe.body}
+</section>
+<p class="tag">{recipe.source}</p>
+<p>{recipe.subtitle}</p>
+</RecipeLayout>
+
+<style lang="scss" define:vars={{ thumbUrl }}>
+@use "../../styles/bp";
+
+.pins-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+.summary {
+    text-align: center;
+    margin-top: 64px;
+    margin-bottom:32px;
+    font-family: serif;
+    h1, h2 {
+        margin: 0;
+    }
+    h1 {
+        font-size: xx-large;
+    }
+
+    &-items {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        // gap: 32px;
+
+        p {
+            padding: 0 3rem;
+            border-right: 1px solid var(--border-color);
+        }
+
+        :last-child {
+            border: none;
+        }
+    }
+}
+
+.ingredients {
+    display: flex;
+    flex-direction: row;
+    padding-top: 15px;
+    overflow: hidden;
+    // over
+
+    .content {
+        flex: 5;
+        background-color: var(--foreground);
+        padding: 1em;
+        ul {
+            padding: 0;
+        }
+    }
+
+    .image {
+        position: relative;
+        flex: 4;
+        // flex-basis: 20%;
+        // background-color: green;
+        min-height: 320px;
+
+        img {
+            position: absolute;
+            left: -10px;
+            top: 20px;
+            height: 320px;
+            aspect-ratio: 1;
+            border-radius: 2px;
+        }
+    }
+}
+
+ul {
+    &:first-child {
+        background-color: red;
+    }
+    li {
+        background-color: red;
+    }
+}
+
+a {
+    margin-left: 12px;
+    color: var(--font-color);
+}
+
+</style>

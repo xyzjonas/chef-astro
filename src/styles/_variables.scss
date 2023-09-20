@@ -1,0 +1,5 @@
+$foobar: yellow;
+
+@mixin for-phone-only {
+    @media (max-width: 599px) { @content; }
+}

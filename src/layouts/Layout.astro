@@ -1,0 +1,95 @@
+--- 
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content="Astro description">
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+    </head>
+    <body>
+        <button id="theme-toggle" style="position: absolute; right: 0">X</button>
+        <slot />
+    </body>
+</html>
+
+<script is:inline>
+    const storedTheme = localStorage.getItem('theme') || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    if (storedTheme)
+        document.documentElement.setAttribute('data-theme', storedTheme)
+</script>
+
+<script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        const html = document.documentElement;
+        const theme = html.getAttribute("data-theme") === "dark" ? "light" : "dark"
+        html.setAttribute("data-theme", theme)
+        localStorage.setItem("theme", theme)
+    })
+</script>
+
+<style is:global lang="scss">
+
+    :root, html[data-theme="light"] {
+        --accent: rgb(211, 84, 89);
+
+        --background: rgb(230, 230, 230);
+        --foreground: #f9f9f9;
+        --font-color: #454444;
+        --font-color-inv: white;
+        --border-color: #7f7d7d96;
+    }
+
+    html[data-theme="dark"] {
+        --accent: rgb(211, 84, 89);
+        --accent-gradient: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60%);
+        
+        --background: #13151A;
+        --font-color: #e5ebeb;
+        --font-color-inv: #454444;
+        --border-color: var(--font-color);
+    }
+
+    html {
+        font-family: system-ui, sans-serif;
+    }
+    body {
+        margin: 0;
+        background: var(--background);
+        color: var(--font-color);
+
+        position: absolute;
+        inset: 0;
+        
+        &::-webkit-scrollbar {
+            width: 0.2em;
+            margin-right: 1em;
+        }
+        
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 0.25em;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background-color: var(--font-color);
+            outline: 10px solid transparent;
+            border-radius: 10px;
+        }
+
+    }
+
+    code {
+        font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+            Bitstream Vera Sans Mono, Courier New, monospace;
+    }
+</style>

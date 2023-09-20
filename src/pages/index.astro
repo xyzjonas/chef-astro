@@ -1,0 +1,165 @@
+---
+import { getRecipes } from "../singleton";
+import Card from '../components/Card.astro';
+import HomeLayout from '../layouts/HomeLayout.astro';
+
+const recipes = await getRecipes();
+---
+<HomeLayout>
+    <div slot="default" id="recipes-grid">
+        {recipes.map(r => (
+            <Card recipe={r} />  // link-card
+        ))}
+    </div>
+    <div slot="sticky" class="search-row">
+        <input id="search-bar" placeholder={`search ${recipes.length} recipes`}>
+    </div>
+</HomeLayout>
+
+<script>
+    import Fuse from 'fuse.js'
+    import { f } from '../utils/characters'
+
+    const GRID_ID = "recipes-grid"
+    const SEARCH_ID = "search-bar"
+    const R_ID = 'data-recipe-id'
+    const R_TITLE = 'data-recipe-title'
+    const R_SUBTITLE = 'data-recipe-subtitle'
+
+
+    const sortBySearch = (resultIds: string[]) => {
+        const grid = document.getElementById(GRID_ID);
+            if (grid) {
+                [...grid.children]
+                    .sort((a, b) => resultIds.indexOf(a.getAttribute('data-recipe-id') ?? "") - resultIds.indexOf(b.getAttribute('data-recipe-id') ?? ""))
+                    .forEach(node => grid.appendChild(node));
+            }
+    }
+
+    const sortAplha = () => {
+        const grid = document.getElementById(GRID_ID);
+            if (grid) {
+                [...grid.children]
+                    .sort((a, b) => a.getAttribute('data-recipe-id')?.localeCompare(b.getAttribute('data-recipe-id') ?? "") ?? -1)
+                    .forEach(node => grid.appendChild(node));
+            }
+    }
+
+
+    // const r = {recipes}
+    document.getElementById(SEARCH_ID)?.addEventListener('input', () => {
+        const searchQuery = document.getElementById(SEARCH_ID)?.value
+
+        if (!searchQuery) {
+            sortAplha()
+            return
+        }
+
+        console.info(`Searching for: ${searchQuery}`)
+
+        const cardElements = [...document.querySelectorAll(`[${R_ID}]`)]
+
+        const cardsSearchData = cardElements.map(c => ({
+            id: c.getAttribute(R_ID),
+            title: f(c.getAttribute(R_TITLE)),
+            subtitle: f(c.getAttribute(R_SUBTITLE)),
+        }))
+        
+        const fuse = new Fuse(cardsSearchData, {keys: ['title', 'subtitle']});
+        const results = fuse.search(searchQuery)
+
+        if (results?.length > 0) {
+            document.getElementById('top')?.scrollIntoView({block: 'start', behavior: 'smooth'})
+
+            const resultIds = results.map(r => r.item.id)
+
+            cardElements.forEach(el => el.setAttribute('data-visible', 'false'))
+
+            cardElements.filter(el => {
+                const index = resultIds.indexOf(el.getAttribute(R_ID))
+                if (index > 0) console.info(`${el.getAttribute(R_ID)}: ${el.getAttribute(R_TITLE)}: index ${index}`)
+                return index >= 0
+            }).forEach(el => el.setAttribute('data-visible', 'true'))
+
+            sortBySearch(resultIds)
+            
+            console.debug("No1 result:")
+            console.debug(resultIds[0])
+            console.table(results[0].item)
+        }
+
+    })
+</script>
+
+<style lang="scss">
+@use "../styles/_colors";
+@use "../styles/_bp";
+
+#search-bar {
+    bottom: 0;
+    width: 100%;
+    
+    padding: 16px 0;
+    text-align: center;
+
+    font-size: larger;
+    border: 1px solid transparent;
+    background-color: var(--background);
+    caret-color: var(--font-color);
+    color: var(--font-color);
+
+    &:focus {
+        outline: none;
+    }
+}
+
+#recipes-grid {
+    display: grid;
+    gap: 6px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    min-height: 100%;
+    padding: 8px;
+
+    @include bp.for-phone-only {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    @include bp.for-tablet-portrait-up {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    @include bp.for-tablet-landscape-up {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    @include bp.for-desktop-up {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    }
+
+    @include bp.for-big-desktop-up {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+
+}
+
+.search-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    border-top: 2px solid var(--border-color);
+}
+
+// #home-wrapper {
+//     min-height: 100%;
+//     // position: absolute;
+//     // inset: 0;
+// }
+//  // display: flex;
+//  // position: absolute;
+//  // flex-direction: column;
+//  // padding: 16px;
+//  inset: 0;
+// }
+
+</style>

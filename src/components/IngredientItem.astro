@@ -1,0 +1,57 @@
+---
+import type { IngredientItem } from '../types'
+interface Props {
+    ingredientItem: IngredientItem
+}
+
+const { ingredientItem } = Astro.props
+---
+
+<li class="item">
+    <h1>{ingredientItem.amount}</h1>
+    <p>
+        <span class="unit">{ingredientItem.unit.name}</span>
+        <span class="name">{ingredientItem.ingredient.name}</span>
+        {ingredientItem.note}
+    </p>
+</li>
+
+<style>
+li {
+    list-style: none;
+    border-bottom: 1px dashed var(--border);
+}
+.item {
+    margin-left: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+    /* justify-content: space-between; */
+}
+h1 {
+    margin: 0;
+    font-family: serif;
+    font-size: xx-large;
+    min-width: 3rem;
+    text-align: right;
+}
+
+p {
+    width: 100%;
+    margin-right: 12px;
+    padding: 3px;
+    border-bottom: 1px dashed var(--border-color);
+
+    .name {
+        margin-left: 0.5rem;
+        font-weight: 600;
+    }
+}
+
+.unit {
+    font-size: small;
+    font-weight: 400;
+}
+
+</style>

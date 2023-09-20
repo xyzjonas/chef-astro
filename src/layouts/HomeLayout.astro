@@ -1,0 +1,22 @@
+---
+import Layout from "./Layout.astro";
+---
+<Layout title="Chef | Home">
+    <section id="home-wrapper">
+        <slot />
+    </section>
+    <section class="sticky">
+        <slot name="sticky" />
+    </section>
+</Layout>
+
+<style lang="scss">
+.sticky {
+    position: sticky;
+    bottom: 0;
+}
+
+#home-wrapper {
+    min-height: 100%;
+}
+</style>
