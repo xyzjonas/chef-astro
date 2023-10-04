@@ -1,6 +1,8 @@
 ---
 import Pin from '../../components/Pin.astro';
 import IngredientItem from '../../components/IngredientItem.astro'
+import EmptySection from '../../components/EmptySection.astro'
+
 import Layout from '../../layouts/Layout.astro';
 import RecipeLayout from '../../layouts/RecipeLayout.astro';
 import { getRecipes, getRecipe } from '../../singleton';
@@ -27,35 +29,34 @@ const thumbUrl = mediumImage(recipe.id)
 <RecipeLayout title={recipe.title}>
 
 <section class="summary">
-    <h1>{recipe.title}</h1>
-    <h2>{recipe.subtitle}</h2>
-    <div class="summary-items">
-        <p>X</p>
-        <p>Y</p>
-        <p>Z</p>
+    <img src={thumbUrl}>
+    <div class="summary-title">
+        <h1>{recipe.title}</h1>
+        <h2>{recipe.subtitle}</h2>
+        <div class="summary-title-pins">
+            {recipe.tags.map(t => (
+                <Pin name={t.name} />
+            ))}
+        </div>
     </div>
 </section>
 
-<div><i class="gg-push-left"></i></div>
 <a href="/">↵ back</a>
 
-<section class="ingredients">
-    <div class="content">
-        <h4 style="margin-bottom: 0;">INGREDIENTS</h4>
-        <ul class="ingredients-list">
-            {recipe.ingredients.map(ing => (
-                <IngredientItem ingredientItem={ing} />
-            ))}
-        </ul>
-    </div>
-    <div class="image">
-        <img src={thumbUrl}/>
-    </div>
+<section class="ingredients-content">
+    <h4 style="margin-bottom: 0;">{recipe.ingredients.length} INGREDIENTS</h4>
+    <ul class="ingredients-list">
+        {recipe.ingredients.map(ing => (
+            <IngredientItem ingredientItem={ing} />
+        ))}
+    </ul>
 </section>
 
 <section class="content">
-    {recipe.body}
+    <Fragment set:html={recipe.body} />
+    { recipe.body ? '' : <EmptySection title='Recipe not written yet...' subtitle="Don't be lazy!" /> }
 </section>
+
 <p class="tag">{recipe.source}</p>
 <p>{recipe.subtitle}</p>
 </RecipeLayout>
@@ -69,10 +70,56 @@ const thumbUrl = mediumImage(recipe.id)
     gap: 8px;
 }
 .summary {
-    text-align: center;
-    margin-top: 64px;
-    margin-bottom:32px;
-    font-family: serif;
+
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    &-title {
+        align-self: center;
+        text-align: center;
+        margin-top: 12px;
+        margin-bottom:32px;
+        font-family: serif;
+
+        &-pins {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        &-items {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            p {
+                padding: 0 8px;
+                border-right: 1px solid var(--border-color);
+            }
+
+            :last-child {
+                border: none;
+            }
+        }
+    }
+
+    img {
+        border-radius: 50%;
+        max-width: 50%;
+
+        @include bp.for-phone-only {
+            border-radius: 0;
+            width: 100%;
+            max-width: 100%;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, blue 1%, red 100%);
+        }
+    }
+
     h1, h2 {
         margin: 0;
     }
@@ -80,56 +127,20 @@ const thumbUrl = mediumImage(recipe.id)
         font-size: xx-large;
     }
 
-    &-items {
-        margin-top: 12px;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        // gap: 32px;
+}
 
-        p {
-            padding: 0 3rem;
-            border-right: 1px solid var(--border-color);
-        }
-
-        :last-child {
-            border: none;
-        }
+.ingredients-content {
+    border: 1px solid var(--border-color);
+    padding: 1em;
+    margin: 1em;
+    ul {
+        padding: 0;
     }
 }
 
-.ingredients {
-    display: flex;
-    flex-direction: row;
-    padding-top: 15px;
-    overflow: hidden;
-    // over
 
-    .content {
-        flex: 5;
-        background-color: var(--foreground);
-        padding: 1em;
-        ul {
-            padding: 0;
-        }
-    }
-
-    .image {
-        position: relative;
-        flex: 4;
-        // flex-basis: 20%;
-        // background-color: green;
-        min-height: 320px;
-
-        img {
-            position: absolute;
-            left: -10px;
-            top: 20px;
-            height: 320px;
-            aspect-ratio: 1;
-            border-radius: 2px;
-        }
-    }
+.content {
+    padding: 0 1em;
 }
 
 ul {

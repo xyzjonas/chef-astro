@@ -20,17 +20,22 @@ const thumbUrl = `url(${smallImage(recipe.id)})`
         </header>
         <footer>
         <h2>{recipe.title}</h2>
-        <p>{recipe.subtitle}</p>
+        <div class="last-row">
+            <p>{recipe.subtitle}</p>
+        </div>
         </footer>
     </a>
+    <p class={recipe.body ? 'green' : 'red'}></p>
+    <p class={recipe.ingredients.length > 0 ? 'green2' : 'red2'}></p>
 </li>
 <style define:vars={{ thumbUrl }} lang="scss">
 @use '../styles/colors' ;
 .link-card {
     list-style: none;
+    position: relative;
     display: flex;
     background-image: var(--thumbUrl);
-    border-radius: 5px;
+    border-radius: 3px;
     background-position: center;
     background-size: cover;
     transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
@@ -97,4 +102,22 @@ p {
 .link-card[data-visible="false"] {
     display: none;
 }
+
+.green, .red {
+    position: absolute;
+    top: 0px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.red {
+    background-color: var(--danger-color);
+}
+
+.green {
+    background-color: var(--success-color);
+}
+
 </style>

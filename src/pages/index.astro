@@ -45,13 +45,18 @@ const recipes = await getRecipes();
             }
     }
 
+    const showAll = () => {
+        const cardElements = [...document.querySelectorAll(`[${R_ID}]`)];
+        cardElements.forEach(el => el.setAttribute('data-visible', 'true'));
+    }
 
-    // const r = {recipes}
     document.getElementById(SEARCH_ID)?.addEventListener('input', () => {
         const searchQuery = document.getElementById(SEARCH_ID)?.value
 
         if (!searchQuery) {
-            sortAplha()
+            console.info('EMPTY!!!')
+            showAll();
+            sortAplha();
             return
         }
 
@@ -82,10 +87,7 @@ const recipes = await getRecipes();
             }).forEach(el => el.setAttribute('data-visible', 'true'))
 
             sortBySearch(resultIds)
-            
-            console.debug("No1 result:")
-            console.debug(resultIds[0])
-            console.table(results[0].item)
+
         }
 
     })
@@ -115,10 +117,10 @@ const recipes = await getRecipes();
 
 #recipes-grid {
     display: grid;
-    gap: 6px;
+    gap: 4px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     min-height: 100%;
-    padding: 8px;
+    padding: 2px;
 
     @include bp.for-phone-only {
         grid-template-columns: 1fr 1fr;

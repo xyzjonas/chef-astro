@@ -17,7 +17,9 @@ const { title } = Astro.props;
         <title>{title}</title>
     </head>
     <body>
-        <button id="theme-toggle" style="position: absolute; right: 0">X</button>
+        <nav class="top-navbar">
+            <button id="theme-toggle"></button>
+        </nav>
         <slot />
     </body>
 </html>
@@ -47,6 +49,8 @@ const { title } = Astro.props;
         --font-color: #454444;
         --font-color-inv: white;
         --border-color: #7f7d7d96;
+        --success-color: #57cc99;
+        --danger-color: #d62828;
     }
 
     html[data-theme="dark"] {
@@ -55,8 +59,9 @@ const { title } = Astro.props;
         
         --background: #13151A;
         --font-color: #e5ebeb;
+        --foreground: #232428;
         --font-color-inv: #454444;
-        --border-color: var(--font-color);
+        --border-color: #7f7d7d96;
     }
 
     html {
@@ -88,8 +93,33 @@ const { title } = Astro.props;
 
     }
 
+    .top-navbar {
+        min-height: 24px;
+        // background-color: var(--border-color);
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 100;
+
+        button {
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--background);
+            aspect-ratio: 1;
+            border-width: 0;
+            box-shadow: none;
+            // margin: 5px;
+        }
+    }
+
     code {
         font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
             Bitstream Vera Sans Mono, Courier New, monospace;
+    }
+
+    #theme-toggle {
+        position: absolute;
+        right: 12px;
+        top: 12px
     }
 </style>
