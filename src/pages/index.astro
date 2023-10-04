@@ -12,6 +12,7 @@ const recipes = await getRecipes();
         ))}
     </div>
     <div slot="sticky" class="search-row">
+        <span class="material-icons">search</span>
         <input id="search-bar" placeholder={`search ${recipes.length} recipes`}>
     </div>
 </HomeLayout>
@@ -146,22 +147,19 @@ const recipes = await getRecipes();
 
 .search-row {
     width: 100%;
+    height: 3em;
     display: flex;
     flex-direction: row;
+    position: relative;
 
     border-top: 2px solid var(--border-color);
-}
 
-// #home-wrapper {
-//     min-height: 100%;
-//     // position: absolute;
-//     // inset: 0;
-// }
-//  // display: flex;
-//  // position: absolute;
-//  // flex-direction: column;
-//  // padding: 16px;
-//  inset: 0;
-// }
+    span {
+        color: gray;
+        position: absolute;
+        left: 12px;
+        top: calc(3em / 2 - 24px);
+    }
+}
 
 </style>

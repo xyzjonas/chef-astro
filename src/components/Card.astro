@@ -25,8 +25,10 @@ const thumbUrl = `url(${smallImage(recipe.id)})`
         </div>
         </footer>
     </a>
-    <p class={recipe.body ? 'green' : 'red'}></p>
-    <p class={recipe.ingredients.length > 0 ? 'green2' : 'red2'}></p>
+    <div class="link-card-corner">
+        <span class={`material-icons ${recipe.ingredients.length > 0 ? 'green' : 'red'}`}>restaurant</span>
+        <span class={`material-icons ${recipe.body ? 'green' : 'red'}`}>menu_book</span>
+    </div>
 </li>
 <style define:vars={{ thumbUrl }} lang="scss">
 @use '../styles/colors' ;
@@ -44,6 +46,15 @@ const thumbUrl = `url(${smallImage(recipe.id)})`
     overflow: hidden;
 
     text-shadow: #101113 3px -1px 10px, #101113 -3px 1px 10px;
+
+    &-corner {
+        position: absolute;
+        bottom: 2px;
+        right: 0px;
+        display: flex;
+        text-shadow: none;
+    }
+
     a {
 
         width: 100%;
@@ -103,21 +114,12 @@ p {
     display: none;
 }
 
-.green, .red {
-    position: absolute;
-    top: 0px;
-    right: 4px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
 .red {
-    background-color: var(--danger-color);
+    color: #7f7f7f;
 }
 
 .green {
-    background-color: var(--success-color);
+    color: #73ba9b;
 }
 
 </style>

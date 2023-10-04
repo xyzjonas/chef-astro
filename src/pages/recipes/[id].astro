@@ -2,12 +2,12 @@
 import Pin from '../../components/Pin.astro';
 import IngredientItem from '../../components/IngredientItem.astro'
 import EmptySection from '../../components/EmptySection.astro'
+import Link from '../../components/Link.astro'
 
-import Layout from '../../layouts/Layout.astro';
 import RecipeLayout from '../../layouts/RecipeLayout.astro';
 import { getRecipes, getRecipe } from '../../singleton';
 import type { Recipe } from '../../types';
-import { mediumImage } from '../../utils/links';
+import { mediumImage, BASE_URL } from '../../utils/links';
 
 export async function getStaticPaths() {
 
@@ -27,9 +27,12 @@ const thumbUrl = mediumImage(recipe.id)
 
 ---
 <RecipeLayout title={recipe.title}>
-
 <section class="summary">
-    <img src={thumbUrl}>
+    
+    <div class="summary-image">
+        <img src={thumbUrl}>
+        <div class="summary-image-gradient"></div>
+    </div>
     <div class="summary-title">
         <h1>{recipe.title}</h1>
         <h2>{recipe.subtitle}</h2>
@@ -41,8 +44,17 @@ const thumbUrl = mediumImage(recipe.id)
     </div>
 </section>
 
-<a href="/">↵ back</a>
-<a href={`https://chef-a2nlxswxda-ez.a.run.app/#/recipes/${recipe.id}`}>edit</a>
+<section class="buttons" style="margin-bottom: 12px;">
+{ 
+    recipe.source &&
+    <Link text={recipe.source_name ?? recipe.source} icon='link' href={recipe.source} />
+}
+</section>
+
+<section class="buttons">
+    <Link text="Back" icon='reply' newTab={false} href="/" />
+    <Link text="Edit" icon="edit" newTab={true} href={`${BASE_URL}/#/recipes/${recipe.id}`} />
+</section>
 
 <section class="ingredients-content">
     <h4 style="margin-bottom: 0;">{recipe.ingredients.length} INGREDIENTS</h4>
@@ -58,8 +70,6 @@ const thumbUrl = mediumImage(recipe.id)
     { recipe.body ? '' : <EmptySection title='Recipe not written yet...' subtitle="Don't be lazy!" /> }
 </section>
 
-<p class="tag">{recipe.source}</p>
-<p>{recipe.subtitle}</p>
 </RecipeLayout>
 
 <style lang="scss" define:vars={{ thumbUrl }}>
@@ -73,15 +83,16 @@ const thumbUrl = mediumImage(recipe.id)
 .summary {
 
     display: flex;
-    gap: 64px;
+    gap: 32px;
     flex-wrap: wrap;
     justify-content: center;
+    position: relative;
 
     &-title {
         align-self: center;
         text-align: center;
         margin-top: 12px;
-        margin-bottom:32px;
+        margin-bottom:12px;
         font-family: serif;
 
         &-pins {
@@ -108,16 +119,33 @@ const thumbUrl = mediumImage(recipe.id)
         }
     }
 
-    img {
-        border-radius: 50%;
-        max-width: 50%;
-
-        @include bp.for-phone-only {
-            border-radius: 0;
+    &-image {
+        position: relative;
+        &-gradient {
             width: 100%;
-            max-width: 100%;
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, blue 1%, red 100%);
+            height: 50%;
+            background-image: linear-gradient(to bottom, transparent 0%, var(--background) 90%);
+            position: absolute;
+            display: none;
+            top: 50%;
+
+            @include bp.for-phone-only {
+                display: block;
+            }
+        }
+        img {
+            border-radius: 50%;
+            width: 320px;
+            margin-top: 24px;
+
+            @include bp.for-phone-only {
+                margin-top: 0;
+                border-radius: 0;
+                width: 100%;
+                max-width: 100%;
+                mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
+                -webkit-mask-image: linear-gradient(to bottom, blue 1%, red 100%);
+            }
         }
     }
 
@@ -126,13 +154,17 @@ const thumbUrl = mediumImage(recipe.id)
     }
     h1 {
         font-size: xx-large;
+        font-family: 'Staatliches', cursive;
+        text-transform: uppercase;
+    }
+    h2 {
+        color: gray;
     }
 
 }
 
 .ingredients-content {
     border: 1px solid var(--border-color);
-    padding: 1em;
     margin: 1em;
     ul {
         padding: 0;
@@ -140,8 +172,20 @@ const thumbUrl = mediumImage(recipe.id)
 }
 
 
-.content {
+.content, .buttons, .ingredients-content {
     padding: 0 1em;
+}
+
+.content {
+    text-overflow: ellipsis ["-----"];
+    overflow: hidden;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1em;
 }
 
 ul {

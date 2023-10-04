@@ -1,0 +1,28 @@
+---
+interface Props { icon: string; text: string; href: string; newTab: boolean }
+
+const { icon, text, href, newTab } = Astro.props;
+---
+
+<a href={href} target={`${newTab ? '_blank' : '_self'}`}><span class="material-icons">{icon}</span> {text}</a>
+
+<style lang="scss">
+a {
+    text-decoration: underline;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    color: var(--font-color);
+
+    .material-icons {
+        font-size: 24px;
+        transform: translateY(7px);
+        margin-right: 4px;
+    }
+    &:visited {
+        color: var(--font-color);
+    }
+    &:hover {
+        color: var(--accent);
+    }
+}
+</style>
