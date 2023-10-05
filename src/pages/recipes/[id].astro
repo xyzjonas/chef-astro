@@ -30,13 +30,13 @@ const thumbUrl = mediumImage(recipe.id)
 <section class="summary">
     
     <div class="summary-image">
-        <img src={thumbUrl} transition:name=`recipe ${recipe.id} image`>
-        <div class="summary-image-gradient" transition:name=`recipe ${recipe.id} gradient`></div>
+        <img src={thumbUrl}>
+        <div class="summary-image-gradient"></div>
     </div>
     <div class="summary-title">
-        <h1 transition:name=`recipe ${recipe.id} title`>{recipe.title}</h1>
+        <h1>{recipe.title}</h1>
         <h2>{recipe.subtitle}</h2>
-        <div class="summary-title-pins" transition:name=`recipe ${recipe.id} pins`>
+        <div class="summary-title-pins">
             {recipe.tags.map(t => (
                 <Pin name={t.name} />
             ))}

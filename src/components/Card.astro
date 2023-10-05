@@ -7,22 +7,19 @@ interface Props { recipe: Recipe; }
 
 const { recipe } = Astro.props;
 
-const imageUrl = smallImage(recipe.id)
-const thumbUrl = `url(${imageUrl})`
+const thumbUrl = `url(${smallImage(recipe.id)})`
 
 ---
 
 <li class="link-card" data-visible="true" data-recipe-id={recipe.id} data-recipe-title={recipe.title} data-recipe-subtitle={recipe.subtitle}>
     <a href={`/recipes/${recipe.id}`}>
-        <img src={imageUrl} transition:name=`recipe ${recipe.id} image`>
-        <div class="link-card-gradient" transition:name=`recipe ${recipe.id} gradient`></div>
         <header>
             {recipe.tags.map(t => (
                 <p class="pin">{t.name}</p>
             ))}
         </header>
         <footer>
-        <h1 transition:name=`recipe ${recipe.id} title`>{recipe.title}</h1>
+        <h2>{recipe.title}</h2>
         <div class="last-row">
             <p>{recipe.subtitle}</p>
         </div>
@@ -35,7 +32,6 @@ const thumbUrl = `url(${imageUrl})`
 </li>
 <style define:vars={{ thumbUrl }} lang="scss">
 @use '../styles/colors' ;
-@use '../styles/bp' ;
 .link-card {
     list-style: none;
     position: relative;
@@ -59,10 +55,6 @@ const thumbUrl = `url(${imageUrl})`
         text-shadow: none;
     }
 
-    &-gradient {
-        opacity: 0;
-    }
-
     a {
 
         width: 100%;
@@ -83,13 +75,6 @@ const thumbUrl = `url(${imageUrl})`
         footer {
             margin-top: auto;
         }
-    }
-
-    img {
-        position: absolute;
-        width: 100%;
-        opacity: 0;
-        z-index: -1;
     }
 }
 
